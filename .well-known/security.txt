@@ -1,14 +1,7 @@
-# ============================================================
-# KRONOS 360 - Security.txt
-# Punto de contacto para reportes de seguridad
-# ============================================================
-# Este archivo sigue el estándar RFC 9116
-# Más información: https://www.rfc-editor.org/rfc/rfc9116.html
-
 Contact: mailto:security@kronos360.com
-Contact: https://github.com/KRONOSPROYECT/MD-33/issues
-Encryption: https://github.com/KRONOSPROYECT/MD-33/security/policy
+Contact: https://github.com/KRONOSPROYECT/MD-33/security/advisories/new
+Expires: 2027-09-03T23:59:59.000Z
 Preferred-Languages: es, en
-Policy: https://github.com/KRONOSPROYECT/MD-33/security/policy
-Acknowledgments: https://github.com/KRONOSPROYECT/MD-33/security/advisories
-Expires: 2027-09-03T00:00:00.000Z
+Canonical: https://kronos360.com/.well-known/security.txt
+Policy: https://github.com/KRONOSPROYECT/MD-33/blob/main/docs/incident-response.md
+Acknowledgments: https://github.com/KRONOSPROYECT/MD-33/blob/main/docs/threat-model.md
