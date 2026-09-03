@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /assets/data/
+Disallow: /js/
+
+Sitemap: https://KRONOSPROYECT.github.io/MD-33/sitemap.xml
+Crawl-delay: 10
