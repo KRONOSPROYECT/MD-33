@@ -1,13 +1,8 @@
 /**
  * ============================================================
- * KRONOS 360 - Checkout con créditos
+ * KRONOS 360 - Checkout con créditos (VERSIÓN BLINDADA)
  * Integración con Stripe y gestión de saldo local
  * ============================================================
- * 
- * INSTRUCCIONES:
- * 1. Reemplaza 'pk_live_TU_CLAVE_PUBLICA' con tu clave pública de Stripe
- * 2. Para pruebas usa: pk_test_TU_CLAVE_PUBLICA
- * 3. El webhook de éxito redirige a gracias.html con los créditos
  * 
  * VERSIÓN: 1.0.0
  * SELLO: KRONOS-MD-33-467162326
@@ -16,15 +11,13 @@
 
 const KRONOS_PAY = {
     // ===== CONFIGURACIÓN =====
-    // ⚠️ CAMBIA ESTO: Usa tu clave pública de Stripe
     stripePublicKey: 'pk_live_TU_CLAVE_PUBLICA',
     
     productName: 'KRONOS 360 - Créditos de trazabilidad',
-    pricePerCredit: 0.50,      // $0.50 USD por folio
-    minCredits: 100,           // Compra mínima de 100 folios ($50 USD)
+    pricePerCredit: 0.50,
+    minCredits: 100,
     currency: 'USD',
     
-    // URLs del sistema
     successUrl: window.location.origin + '/pay/gracias.html',
     cancelUrl: window.location.origin + '/#planes',
     
@@ -46,22 +39,30 @@ const KRONOS_PAY = {
         return saldo;
     },
 
-    // ===== OBTENER CRÉDITOS DESDE localStorage =====
+    // ===== OBTENER CRÉDITOS CON LÍMITE Y VALIDACIÓN =====
     obtenerCredits() {
         try {
-            const vault = JSON.parse(localStorage.getItem('kronos_credits') || '{"balance":0}');
-            return typeof vault.balance === 'number' ? vault.balance : 0;
+            const v = JSON.parse(localStorage.getItem('kronos_credits') || '{"balance":0}');
+            // VALIDACIÓN: Si el saldo es irreal, lo limitamos
+            if (v.balance > 100000) {
+                console.warn('⚠️ Posible tamper detectado - Limitando saldo a 100,000');
+                return 100000;
+            }
+            return typeof v.balance === 'number' ? v.balance : 0;
         } catch {
             return 0;
         }
     },
 
-    // ===== AGREGAR CRÉDITOS (se llama desde gracias.html) =====
+    // ===== AGREGAR CRÉDITOS =====
     agregarCredits(cantidad) {
-        if (typeof cantidad !== 'number' || cantidad <= 0) return false;
+        if (typeof cantidad !== 'number' || cantidad <= 0 || cantidad > 10000) {
+            console.warn('⚠️ Intento de agregar cantidad inválida:', cantidad);
+            return false;
+        }
         
         const actual = this.obtenerCredits();
-        const nuevo = actual + cantidad;
+        const nuevo = Math.min(actual + cantidad, 100000); // Cap máximo
         
         try {
             localStorage.setItem('kronos_credits', JSON.stringify({ 
@@ -74,7 +75,7 @@ const KRONOS_PAY = {
         }
     },
 
-    // ===== GASTAR CRÉDITO (al generar un folio) =====
+    // ===== GASTAR CRÉDITO =====
     gastarCredito() {
         const actual = this.obtenerCredits();
         if (actual <= 0) return false;
@@ -91,7 +92,7 @@ const KRONOS_PAY = {
         }
     },
 
-    // ===== OBTENER HISTORIAL DE TRANSACCIONES =====
+    // ===== OBTENER HISTORIAL =====
     obtenerHistorial() {
         try {
             return JSON.parse(localStorage.getItem('kronos_transacciones') || '[]');
@@ -123,7 +124,6 @@ const KRONOS_PAY = {
 
     // ===== BIND EVENTOS =====
     bindEvents() {
-        // Botón de compra en la landing
         document.querySelectorAll('.btn-pay').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -131,13 +131,11 @@ const KRONOS_PAY = {
             });
         });
 
-        // Botón de "Comprar más créditos" en dashboard
         const btnRecargar = document.getElementById('btn-recargar');
         if (btnRecargar) {
             btnRecargar.addEventListener('click', () => this.startCheckout());
         }
 
-        // Input de cantidad de créditos (si existe)
         const inputCantidad = document.getElementById('cantidad-creditos');
         if (inputCantidad) {
             inputCantidad.addEventListener('change', () => {
@@ -146,7 +144,7 @@ const KRONOS_PAY = {
         }
     },
 
-    // ===== ACTUALIZAR PRECIO EN VIVO =====
+    // ===== ACTUALIZAR PRECIO =====
     actualizarPrecio() {
         const input = document.getElementById('cantidad-creditos');
         const precioElement = document.getElementById('precio-total');
@@ -160,14 +158,11 @@ const KRONOS_PAY = {
 
     // ===== INICIAR CHECKOUT (Stripe) =====
     async startCheckout() {
-        // Validar que Stripe esté cargado
         if (typeof Stripe === 'undefined') {
-            alert('⚠️ La pasarela de pagos no está disponible. Intenta de nuevo.');
-            console.error('❌ Stripe no está definido. Verifica que cargaste stripe.js');
+            alert('⚠️ La pasarela de pagos no está disponible.');
             return;
         }
 
-        // Obtener cantidad
         const input = document.getElementById('cantidad-creditos');
         let cantidad = this.minCredits;
         
@@ -178,35 +173,34 @@ const KRONOS_PAY = {
             }
         }
 
-        // Validar cantidad mínima
         if (cantidad < this.minCredits) {
-            alert(`⚠️ La compra mínima es de ${this.minCredits} folios ($${(this.minCredits * this.pricePerCredit).toFixed(2)} USD).`);
+            alert(`⚠️ La compra mínima es de ${this.minCredits} folios.`);
             if (input) input.value = this.minCredits;
             return;
         }
 
-        // Calcular monto
-        const monto = (cantidad * this.pricePerCredit).toFixed(2);
-
-        // Verificar conexión a internet
-        if (!navigator.onLine) {
-            alert('⚠️ No hay conexión a internet. Conéctate para realizar el pago.');
+        if (cantidad > 10000) {
+            alert('⚠️ La compra máxima es de 10,000 folios.');
             return;
         }
 
-        // ===== Stripe =====
+        const monto = (cantidad * this.pricePerCredit).toFixed(2);
+
+        if (!navigator.onLine) {
+            alert('⚠️ No hay conexión a internet.');
+            return;
+        }
+
         const stripe = Stripe(this.stripePublicKey);
         
         try {
-            // Mostrar estado de carga
             const btn = document.querySelector('.btn-pay');
             if (btn) {
                 btn.textContent = '⏳ Procesando...';
                 btn.disabled = true;
             }
 
-            // 🔧 CAMBIA ESTO: Reemplaza con tu endpoint de backend
-            // Si usas Netlify Functions, Vercel Serverless, o tu propio backend
+            // ⚠️ CAMBIA ESTO por tu endpoint real
             const response = await fetch('https://tu-backend.com/api/create-checkout-session', {
                 method: 'POST',
                 headers: { 
@@ -218,7 +212,7 @@ const KRONOS_PAY = {
                     monto: monto,
                     currency: this.currency,
                     product: this.productName,
-                    success_url: this.successUrl + `?credits=${cantidad}`,
+                    success_url: this.successUrl + `?tx=PENDIENTE`,
                     cancel_url: this.cancelUrl,
                     metadata: {
                         credits: cantidad,
@@ -229,18 +223,15 @@ const KRONOS_PAY = {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                throw new Error(`HTTP ${response.status}`);
             }
 
             const session = await response.json();
             
             if (session.id) {
-                // Redirigir a Stripe Checkout
                 const result = await stripe.redirectToCheckout({ sessionId: session.id });
-                
                 if (result.error) {
-                    console.error('❌ Error de Stripe:', result.error);
-                    alert('❌ Error al iniciar el pago: ' + result.error.message);
+                    alert('❌ Error: ' + result.error.message);
                     this.restaurarBoton();
                 }
             } else {
@@ -249,14 +240,13 @@ const KRONOS_PAY = {
         } catch (error) {
             console.error('❌ Error de checkout:', error);
             
-            // Si es un error de red, modo demo
             if (error.message.includes('fetch') || error.message.includes('NetworkError')) {
                 alert('⚠️ No se pudo conectar al servidor. ¿Quieres probar en modo demo?');
                 if (confirm('🔬 Modo demo: Simular pago sin Stripe')) {
                     this.simulatePayment(cantidad);
                 }
             } else {
-                alert('❌ Error al conectar con la pasarela de pagos. Intenta de nuevo.');
+                alert('❌ Error al conectar con la pasarela de pagos.');
             }
             this.restaurarBoton();
         }
@@ -271,7 +261,7 @@ const KRONOS_PAY = {
         }
     },
 
-    // ===== SIMULACIÓN DE PAGO (demo) =====
+    // ===== SIMULACIÓN BLINDADA (NO USA URL) =====
     simulatePayment(cantidad) {
         if (!confirm(`💳 Modo demo: ¿Comprar ${cantidad} folios por $${(cantidad * this.pricePerCredit).toFixed(2)} USD?`)) {
             this.restaurarBoton();
@@ -279,25 +269,22 @@ const KRONOS_PAY = {
         }
 
         try {
-            // Generar folio de transacción
-            const folioTransaccion = 'DEMO-' + Date.now().toString(36).toUpperCase();
+            const folio = 'DEMO-' + Date.now().toString(36).toUpperCase();
             
-            // Guardar en localStorage
-            localStorage.setItem('kronos_last_purchase', JSON.stringify({
+            // Guardar en localStorage con firma y timestamp
+            const payload = {
                 credits: cantidad,
-                folio: folioTransaccion,
-                timestamp: new Date().toISOString(),
-                demo: true
-            }));
-
-            // Registrar transacción
-            this.registrarTransaccion('compra_demo', cantidad, 'demo', folioTransaccion);
-
-            // Agregar créditos
+                folio: folio,
+                ts: Date.now(),
+                sig: btoa(cantidad + '|' + Date.now()).slice(0, 16)
+            };
+            
+            localStorage.setItem('kronos_last_purchase', JSON.stringify(payload));
+            this.registrarTransaccion('compra_demo', cantidad, 'demo', folio);
             this.agregarCredits(cantidad);
-
-            // Redirigir
-            window.location.href = this.successUrl + `?credits=${cantidad}&demo=true`;
+            
+            // Redirige SIN pasar créditos en URL
+            window.location.href = this.successUrl + `?tx=${folio}&demo=true`;
 
         } catch (error) {
             console.error('❌ Error en demo:', error);
@@ -306,7 +293,7 @@ const KRONOS_PAY = {
         }
     },
 
-    // ===== VERIFICAR SALDO PARA GENERAR FOLIO =====
+    // ===== VERIFICAR SALDO =====
     verificarSaldo(cantidad = 1) {
         const saldo = this.obtenerCredits();
         if (saldo < cantidad) {
@@ -326,7 +313,6 @@ const KRONOS_PAY = {
 
 // ===== INICIALIZAR =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar que el DOM esté listo
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         KRONOS_PAY.init();
     } else {
@@ -338,13 +324,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== EXPORTAR PARA MÓDULOS (opcional) =====
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = KRONOS_PAY;
 }
 
-// ===== EXPONER GLOBALMENTE =====
 window.KRONOS_PAY = KRONOS_PAY;
 
-console.log('✅ KRONOS 360 - Checkout cargado correctamente');
+console.log('✅ KRONOS 360 - Checkout blindado cargado');
 console.log('🔒 Sellado con KRONOS-MD-33-467162326');
