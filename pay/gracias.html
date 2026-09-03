@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Gracias! · KRONOS 360</title>
+    <meta name="robots" content="noindex">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background: #080808; color: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
+        .container { max-width: 600px; }
+        .icon { font-size: 4rem; margin-bottom: 16px; }
+        h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 8px; }
+        .sub { color: #22c55e; font-size: 1.1rem; margin-bottom: 20px; }
+        .sub.error { color: #ef4444; }
+        p { color: #888; margin-bottom: 12px; line-height: 1.6; }
+        .creditos { background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 1.8rem; font-weight: 800; color: #60a5fa; margin: 20px 0; }
+        .creditos small { font-size: 0.8rem; font-weight: 400; color: #666; }
+        .btn { display: inline-block; padding: 12px 32px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; margin-top: 16px; transition: background 0.2s; }
+        .btn:hover { background: #2563eb; }
+        .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #aaa; margin-left: 12px; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .demo-badge { display: inline-block; background: rgba(234,179,8,0.2); color: #eab308; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; margin-top: 12px; }
+        .transaccion { font-family: monospace; font-size: 0.8rem; color: #555; margin-top: 8px; }
+        .footer-links { margin-top: 30px; font-size: 0.75rem; color: #444; }
+        .footer-links a { color: #555; text-decoration: none; margin: 0 8px; }
+        .footer-links a:hover { color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon" id="icono">🎉</div>
+        <h1 id="titulo">¡Pago exitoso!</h1>
+        <p class="sub" id="subtitulo">✅ Tus créditos han sido añadidos a tu cuenta</p>
+        <p id="mensaje">Gracias por confiar en <strong>KRONOS 360</strong>.</p>
+
+        <div class="creditos" id="creditosAñadidos">
+            0 <small>folios (saldo total)</small>
+        </div>
+
+        <p style="font-size:0.85rem; color:#555;" id="info-adicional">Cada folio te permite rastrear un producto único.</p>
+
+        <div>
+            <a href="../dashboard.html" class="btn">Ir al Dashboard</a>
+            <a href="../index.html" class="btn btn-secondary">Volver al inicio</a>
+        </div>
+
+        <div id="demoBadge" style="display:none;" class="demo-badge">🔬 Modo demo</div>
+        <div class="transaccion" id="transaccionId"></div>
+
+        <div class="footer-links">
+            <a href="../legal/terminos.html">Términos</a> ·
+            <a href="../legal/aviso-privacidad.html">Privacidad</a> ·
+            <a href="../legal/consentimiento-cookies.html">Cookies</a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ============================================================
+            // BLINDAJE ANTI-HACK: NUNCA lee credits de URL
+            // ============================================================
+            const params = new URLSearchParams(window.location.search);
+            const isDemo = params.get('demo') === 'true';
+            const txFromUrl = params.get('tx');
+            
+            let creditsToAdd = 0;
+            let folio = null;
+            let errorMsg = null;
+
+            try {
+                // ===== LECTURA SEGURA DESDE localStorage =====
+                const last = JSON.parse(localStorage.getItem('kronos_last_purchase') || '{}');
+                
+                // VALIDACIONES:
+                // 1. Existe la compra
+                // 2. Tiene créditos > 0
+                // 3. No ha expirado (5 min)
+                // 4. No ha sido usada (anti-replay)
+                // 5. La firma coincide
+                if (last.credits && last.credits > 0) {
+                    const timeDiff = Date.now() - (last.ts || 0);
+                    const isExpired = timeDiff > 300000; // 5 minutos
+                    const isUsed = localStorage.getItem('kronos_used_' + last.folio) === '1';
+                    
+                    // Verificar firma
+                    const expectedSig = btoa(last.credits + '|' + last.ts).slice(0, 16);
+                    const sigValid = last.sig === expectedSig;
+
+                    if (isExpired) {
+                        errorMsg = '⚠️ Esta compra expiró. Por favor, intenta de nuevo.';
+                    } else if (isUsed) {
+                        errorMsg = '⚠️ Esta compra ya fue procesada anteriormente.';
+                    } else if (!sigValid) {
+                        errorMsg = '⚠️ Firma inválida. Posible manipulación.';
+                        console.warn('⚠️ Firma inválida detectada');
+                    } else {
+                        // TODO VÁLIDO - Liberar créditos
+                        creditsToAdd = last.credits;
+                        folio = last.folio;
+                        // Marcar como usada (anti-replay)
+                        localStorage.setItem('kronos_used_' + last.folio, '1');
+                    }
+                } else {
+                    errorMsg = '⚠️ No se encontraron créditos por liberar.';
+                }
+
+            } catch (e) {
+                console.error('❌ Error al procesar compra:', e);
+                errorMsg = '⚠️ Error al procesar la compra.';
+            }
+
+            // ===== SI VIENE DE STRIPE REAL (backend) =====
+            // Aquí tu backend debería haber escrito en localStorage
+            // o puedes leer de un parámetro firmado por webhook
+            if (!creditsToAdd && txFromUrl && txFromUrl.startsWith('STRIPE-')) {
+                // Stripe real: tu backend debe guardar la compra en localStorage
+                // o pasar un token firmado
+                errorMsg = '🔐 Compra de Stripe pendiente de verificación.';
+            }
+
+            // ===== APLICAR CRÉDITOS =====
+            if (creditsToAdd > 0) {
+                if (typeof KRONOS_PAY !== 'undefined' && KRONOS_PAY.agregarCredits) {
+                    KRONOS_PAY.agregarCredits(creditsToAdd);
+                } else {
+                    // Fallback seguro
+                    try {
+                        const actual = JSON.parse(localStorage.getItem('kronos_credits') || '{"balance":0}');
+                        const nuevo = Math.min((actual.balance || 0) + creditsToAdd, 100000);
+                        localStorage.setItem('kronos_credits', JSON.stringify({ 
+                            balance: nuevo,
+                            ultima_actualizacion: new Date().toISOString()
+                        }));
+                    } catch (e) {
+                        console.error('❌ Error al guardar créditos:', e);
+                    }
+                }
+            }
+
+            // ===== ACTUALIZAR UI =====
+            const saldoActual = typeof KRONOS_PAY !== 'undefined' ? 
+                KRONOS_PAY.obtenerCredits() : 
+                (JSON.parse(localStorage.getItem('kronos_credits') || '{"balance":0}').balance || 0);
+            
+            document.getElementById('creditosAñadidos').innerHTML = 
+                `${saldoActual} <small>folios (saldo total)</small>`;
+
+            if (isDemo) {
+                document.getElementById('demoBadge').style.display = 'inline-block';
+            }
+
+            if (folio) {
+                document.getElementById('transaccionId').textContent = '🔑 Transacción: ' + folio;
+            }
+
+            // ===== MOSTRAR ERROR SI CORRESPONDE =====
+            if (errorMsg || creditsToAdd === 0) {
+                document.getElementById('icono').textContent = '⚠️';
+                document.getElementById('titulo').textContent = 'Compra pendiente';
+                document.getElementById('subtitulo').className = 'sub error';
+                document.getElementById('subtitulo').textContent = errorMsg || '⚠️ No se encontraron créditos por liberar';
+                document.getElementById('mensaje').textContent = 'Si realizaste un pago, contacta a soporte.';
+                document.getElementById('info-adicional').textContent = 'Soporte: soporte@kronos360.com';
+            }
+
+            console.log(`✅ Procesamiento completado. Créditos añadidos: ${creditsToAdd}`);
+            console.log(`🔑 Folio: ${folio || 'N/A'}`);
+            console.log(`🔬 Demo: ${isDemo ? 'Sí' : 'No'}`);
+
+        })();
+    </script>
+
+    <!-- Cargar checkout.js para usar sus funciones -->
+    <script src="checkout.js"></script>
+</body>
+</html>
