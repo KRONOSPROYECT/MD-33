@@ -50,4 +50,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    console.log('✅ KRONOS 360 v1.0.0 car
+    console.log('✅ KRONOS 360 v1.0.0 cargado');
+});
