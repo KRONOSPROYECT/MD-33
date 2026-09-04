@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://KRONOSPROYECT.github.io/MD-33/schemas/document-result.schema.json",
+    "title": "KRONOS 360 - Document Result Schema",
+    "description": "Esquema de validación para resultados de verificación de documentos",
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "type": "object",
+    "required": ["success", "fileInfo", "timestamp"],
+    "properties": {
+        "success": {
+            "type": "boolean",
+            "description": "Indica si la verificación fue exitosa"
+        },
+        "verified": {
+            "type": "boolean",
+            "description": "Indica si el documento fue verificado contra un hash esperado"
+        },
+        "match": {
+            "type": "boolean",
+            "description": "Indica si el hash coincide con el esperado"
+        },
+        "error": {
+            "type": "string",
+            "description": "Mensaje de error si success es false"
+        },
+        "details": {
+            "type": "string",
+            "description": "Detalles adicionales del error"
+        },
+        "fileInfo": {
+            "type": "object",
+            "required": ["name", "size", "hash"],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Nombre del archivo"
+                },
+                "size": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Tamaño del archivo en bytes"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Tipo MIME del archivo"
+                },
+                "lastModified": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Fecha de última modificación"
+                },
+                "hash": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{64}$",
+                    "description": "Hash SHA-256 del documento"
+                },
+                "hashShort": {
+                    "type": "string",
+                    "description": "Hash abreviado para visualización"
+                },
+                "storedData": {
+                    "type": "object",
+                    "description": "Datos almacenados del documento"
+                }
+            }
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de la verificación"
+        },
+        "savedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de guardado en localStorage"
+        },
+        "metadata": {
+            "type": "object",
+            "description": "Metadatos adicionales del documento",
+            "properties": {
+                "author": { "type": "string" },
+                "title": { "type": "string" },
+                "version": { "type": "string" },
+                "description": { "type": "string" }
+            }
+        },
+        "_offline": {
+            "type": "boolean",
+            "description": "Indica si la verificación fue realizada en modo offline"
+        },
+        "_version": {
+            "type": "string",
+            "const": "1.0.0"
+        }
+    },
+    "if": {
+        "properties": { "success": { "const": false } }
+    },
+    "then": {
+        "required": ["error"]
+    }
+}
