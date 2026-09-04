@@ -1,0 +1,36 @@
+{
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "updatedAt": "2026-09-03T00:00:00.000Z",
+    "revokedFolios": [
+        {
+            "folio": "AF-2026-8R5P-789-56",
+            "reason": "compromised",
+            "revokedAt": "2026-09-03T11:00:00.000Z",
+            "revokedBy": "system",
+            "description": "Detectado salto geográfico imposible (CDMX → MAD en 10 min)"
+        },
+        {
+            "folio": "AF-2026-5C8K-456-89",
+            "reason": "suspicious",
+            "revokedAt": "2026-09-03T11:30:00.000Z",
+            "revokedBy": "admin",
+            "description": "Salto geográfico sospechoso (CDMX → BCN en 5 min)"
+        },
+        {
+            "folio": "AF-2025-9X2Z-123-45",
+            "reason": "expired",
+            "revokedAt": "2026-08-01T00:00:00.000Z",
+            "revokedBy": "system",
+            "description": "Folio expirado por tiempo de retención"
+        }
+    ],
+    "statusMap": {
+        "compromised": "El folio ha sido comprometido y no debe ser considerado válido",
+        "duplicate": "El folio es un duplicado de otro existente",
+        "cancelled": "El folio fue cancelado por el emisor",
+        "stolen": "El folio fue reportado como robado",
+        "suspicious": "El folio presenta comportamientos sospechosos",
+        "expired": "El folio ha expirado por tiempo de retención"
+    }
+}
