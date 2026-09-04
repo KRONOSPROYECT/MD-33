@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://KRONOSPROYECT.github.io/MD-33/schemas/audit-event.schema.json",
+    "title": "KRONOS 360 - Audit Event Schema",
+    "description": "Esquema de validación para eventos de auditoría",
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "type": "object",
+    "required": ["id", "type", "timestamp", "folioId"],
+    "properties": {
+        "id": {
+            "type": "string",
+            "pattern": "^EVT-[0-9]{4}-[A-Z0-9]{8}$",
+            "description": "Identificador único del evento"
+        },
+        "type": {
+            "type": "string",
+            "enum": [
+                "folio_created",
+                "folio_verified",
+                "folio_revoked",
+                "folio_restored",
+                "document_attached",
+                "document_verified",
+                "audit_completed",
+                "export_created",
+                "admin_login",
+                "settings_changed",
+                "purchase_completed",
+                "credits_added",
+                "credits_spent"
+            ],
+            "description": "Tipo de evento de auditoría"
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora del evento"
+        },
+        "folioId": {
+            "type": "string",
+            "description": "ID del folio asociado al evento",
+            "pattern": "^AF-[0-9]{4}-[A-Z0-9]{4}-[0-9]{3}-[0-9]{2}$"
+        },
+        "userId": {
+            "type": "string",
+            "description": "Identificador del usuario que realizó la acción"
+        },
+        "ipAddress": {
+            "type": "string",
+            "format": "ipv4",
+            "description": "Dirección IP del usuario"
+        },
+        "userAgent": {
+            "type": "string",
+            "description": "User agent del navegador"
+        },
+        "details": {
+            "type": "object",
+            "description": "Detalles específicos del evento",
+            "properties": {
+                "previousValue": { "type": "string" },
+                "newValue": { "type": "string" },
+                "reason": { "type": "string" },
+                "metadata": { "type": "object" }
+            }
+        },
+        "hash": {
+            "type": "string",
+            "description": "Hash del evento para encadenamiento",
+            "pattern": "^MD33-[A-F0-9]{32}$"
+        },
+        "previousHash": {
+            "type": "string",
+            "description": "Hash del evento anterior"
+        },
+        "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Nivel de severidad del evento",
+            "default": "low"
+        }
+    }
+}
