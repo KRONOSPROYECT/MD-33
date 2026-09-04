@@ -1,0 +1,72 @@
+{
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "updatedAt": "2026-09-03T00:00:00.000Z",
+    "iso": {
+        "iso_12931": {
+            "status": "cumple",
+            "description": "Declaración de autenticación por hash encadenado",
+            "implementation": "Quantum Seal MD-33 con encadenamiento de hashes"
+        },
+        "iso_22382": {
+            "status": "cumple",
+            "description": "Sello digital verificable",
+            "implementation": "Sello cuántico con timestamp ISO 8601"
+        },
+        "iso_27001": {
+            "status": "alineado",
+            "description": "Controles de seguridad de la información",
+            "implementation": "CSP, HTTPS, Control de acceso, Logs"
+        }
+    },
+    "nom": {
+        "nom_024_scfi": {
+            "status": "cumple",
+            "description": "Información comercial en QR",
+            "implementation": "QR con URL de verificación"
+        },
+        "nom_151": {
+            "status": "cumple",
+            "description": "Documentos electrónicos de comercio",
+            "implementation": "Aviso de privacidad y términos legales"
+        }
+    },
+    "gdpr": {
+        "status": "alineado",
+        "description": "Derechos ARCO implementados",
+        "implementation": "Exportación, rectificación y eliminación de datos"
+    },
+    "controls": [
+        {
+            "id": "A.1",
+            "name": "Hash encadenado",
+            "status": "implementado"
+        },
+        {
+            "id": "A.2",
+            "name": "Sello de tiempo",
+            "status": "implementado"
+        },
+        {
+            "id": "A.3",
+            "name": "Trazabilidad de eventos",
+            "status": "implementado"
+        },
+        {
+            "id": "A.4",
+            "name": "Offline mode",
+            "status": "implementado"
+        },
+        {
+            "id": "A.5",
+            "name": "Verificación de documentos",
+            "status": "implementado"
+        }
+    ],
+    "audit": {
+        "lastAudit": "2026-09-03",
+        "nextAudit": "2027-09-03",
+        "auditor": "KRONOSPROYECT"
+    },
+    "disclaimer": "Esta matriz es informativa y no constituye una certificación oficial. Para certificación formal, contactar a un organismo acreditado."
+}
