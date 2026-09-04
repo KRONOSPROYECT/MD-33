@@ -1,0 +1,213 @@
+{
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "generatedAt": "2026-09-03T00:00:00.000Z",
+    "description": "Datos de ejemplo para demostración del sistema KRONOS 360",
+    "folios": [
+        {
+            "id": "AF-2026-X9K2-482-73",
+            "estado": "activo",
+            "creado": "2026-09-03T10:00:00.000Z",
+            "nivelConfianza": 92,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:00:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T12:30:00.000Z",
+                    "ubicacion": "GDL",
+                    "descripcion": "Centro de distribución"
+                },
+                {
+                    "timestamp": "2026-09-03T15:45:00.000Z",
+                    "ubicacion": "MTY",
+                    "descripcion": "Almacén final"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-7M3N-156-34",
+            "estado": "activo",
+            "creado": "2026-09-03T10:05:00.000Z",
+            "nivelConfianza": 88,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:05:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T13:00:00.000Z",
+                    "ubicacion": "QRO",
+                    "descripcion": "Punto de control"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-8R5P-789-56",
+            "estado": "activo",
+            "creado": "2026-09-03T10:10:00.000Z",
+            "nivelConfianza": 35,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:10:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T10:20:00.000Z",
+                    "ubicacion": "MAD",
+                    "descripcion": "⚠️ ALERTA: Salto geográfico imposible"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-2T9V-234-12",
+            "estado": "activo",
+            "creado": "2026-09-03T10:15:00.000Z",
+            "nivelConfianza": 95,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:15:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T11:30:00.000Z",
+                    "ubicacion": "PUE",
+                    "descripcion": "Centro de distribución"
+                },
+                {
+                    "timestamp": "2026-09-03T13:45:00.000Z",
+                    "ubicacion": "VER",
+                    "descripcion": "Almacén final"
+                },
+                {
+                    "timestamp": "2026-09-03T15:00:00.000Z",
+                    "ubicacion": "TAB",
+                    "descripcion": "Entrega a cliente"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-4W6Q-567-78",
+            "estado": "activo",
+            "creado": "2026-09-03T10:20:00.000Z",
+            "nivelConfianza": 70,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:20:00.000Z",
+                    "ubicacion": "GDL",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T14:00:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Centro de distribución"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-6H1F-890-45",
+            "estado": "activo",
+            "creado": "2026-09-03T10:25:00.000Z",
+            "nivelConfianza": 60,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:25:00.000Z",
+                    "ubicacion": "MTY",
+                    "descripcion": "Origen - Fábrica"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-9B3Z-123-67",
+            "estado": "activo",
+            "creado": "2026-09-03T10:30:00.000Z",
+            "nivelConfianza": 98,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:30:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T11:00:00.000Z",
+                    "ubicacion": "TOL",
+                    "descripcion": "Punto de control"
+                },
+                {
+                    "timestamp": "2026-09-03T12:00:00.000Z",
+                    "ubicacion": "QRO",
+                    "descripcion": "Centro de distribución"
+                },
+                {
+                    "timestamp": "2026-09-03T14:30:00.000Z",
+                    "ubicacion": "SLP",
+                    "descripcion": "Almacén final"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-5C8K-456-89",
+            "estado": "activo",
+            "creado": "2026-09-03T10:35:00.000Z",
+            "nivelConfianza": 45,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:35:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T10:40:00.000Z",
+                    "ubicacion": "BCN",
+                    "descripcion": "⚠️ ALERTA: Salto geográfico sospechoso"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-3D6M-789-23",
+            "estado": "activo",
+            "creado": "2026-09-03T10:40:00.000Z",
+            "nivelConfianza": 85,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:40:00.000Z",
+                    "ubicacion": "GDL",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T13:15:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Centro de distribución"
+                },
+                {
+                    "timestamp": "2026-09-03T16:00:00.000Z",
+                    "ubicacion": "PUE",
+                    "descripcion": "Almacén final"
+                }
+            ]
+        },
+        {
+            "id": "AF-2026-7E1N-234-56",
+            "estado": "activo",
+            "creado": "2026-09-03T10:45:00.000Z",
+            "nivelConfianza": 78,
+            "escaneos": [
+                {
+                    "timestamp": "2026-09-03T10:45:00.000Z",
+                    "ubicacion": "MTY",
+                    "descripcion": "Origen - Fábrica"
+                },
+                {
+                    "timestamp": "2026-09-03T12:30:00.000Z",
+                    "ubicacion": "CDMX",
+                    "descripcion": "Centro de distribución"
+                }
+            ]
+        }
+    ]
+}
