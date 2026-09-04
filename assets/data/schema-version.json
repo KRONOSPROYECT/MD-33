@@ -1,0 +1,29 @@
+{
+    "version": "1.0.0",
+    "genesisHash": "KRONOS-MD-33-467162326",
+    "schemas": {
+        "folio": "1.0.0",
+        "document": "1.0.0",
+        "audit": "1.0.0",
+        "certificate": "1.0.0",
+        "revocation": "1.0.0"
+    },
+    "compatibility": {
+        "minVersion": "1.0.0",
+        "maxVersion": "1.0.0",
+        "breakingChanges": []
+    },
+    "updatedAt": "2026-09-03T00:00:00.000Z",
+    "changelog": [
+        {
+            "version": "1.0.0",
+            "date": "2026-09-03",
+            "changes": [
+                "Versión inicial del esquema",
+                "Definición de estructura de folios",
+                "Definición de eventos de auditoría",
+                "Definición de esquema de revocaciones"
+            ]
+        }
+    ]
+}
